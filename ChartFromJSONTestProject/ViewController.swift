@@ -52,7 +52,12 @@ class ViewController: UIViewController {
     
     private func layoutChartView() {
         chartView?.snp.makeConstraints({ make in
-            make.leading.equalTo(view.safeAreaLayoutGuide)
+            if let safeAreaLayoutGuide = UIApplication.shared.windows.first?.safeAreaLayoutGuide,
+               safeAreaLayoutGuide.layoutFrame.origin == .zero {
+                make.leading.equalTo(25)
+            } else {
+                make.leading.equalTo(view.safeAreaLayoutGuide)
+            }
             make.trailing.equalTo(-25)
             make.top.equalTo(15)
             make.bottom.equalTo(-15)
