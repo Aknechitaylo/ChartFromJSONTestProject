@@ -7,52 +7,62 @@
 
 import Foundation
 
-struct ChartData: Codable {
-    let series: [Series]
-    let xAxisValues: [XAxisValue]
-    let yAxisValues: [YAxisValue]
+struct ChartData: Decodable {
+    private let series: [Series]
+    private let xAxisValues: [XAxisValue]
+    private let yAxisValues: [YAxisValue]
+    var seriesCount: Int {
+        series.count
+    }
     
     func seriesWithId(_ id: Int) -> Series? {
-        return series.first(where: {$0.id == id})
+        series.first(where: {$0.id == id})
+    }
+    
+    func seriesWithOrder(_ order: Int) -> Series? {
+        series.first(where: {$0.ord == order})
+    }
+    
+    func getXAxisValues() -> [XAxisValue] {
+        self.xAxisValues
     }
     
     func xAxisValueWithId(_ id: Int) -> XAxisValue? {
-        return xAxisValues.first(where: {$0.id == id})
+        xAxisValues.first(where: {$0.id == id})
     }
     
     func xAxisValueWithOrder(_ order: Int) -> XAxisValue? {
-        return xAxisValues.first(where: {$0.ord == order})
+        xAxisValues.first(where: {$0.ord == order})
     }
     
     func yAxisValue(seriesId: Int, cityId: Int) -> YAxisValue? {
-        return yAxisValues.first(where: {$0.seriesId == seriesId && $0.xAxisValueId == cityId})
+        yAxisValues.first(where: {$0.seriesId == seriesId && $0.xAxisValueId == cityId})
     }
 }
 
-struct Series: Codable {
+struct Series: Decodable {
     let name: String
     let id, ord: Int
     let color: String
+    static let `default` = Series(name: "", id: 0, ord: 0, color: "")
 }
 
-struct XAxisValue: Codable {
+struct XAxisValue: Decodable {
     let name: String
     let id, ord: Int
 }
 
-struct YAxisValue: Codable {
+struct YAxisValue: Decodable {
     let seriesId, xAxisValueId, value: Int
 }
 
-class Parser {
+enum Parser {
     static func parseJSON(jsonData: Data) -> ChartData? {
-        var result: ChartData?
         do {
-            result = try JSONDecoder().decode(ChartData.self, from: jsonData)
+            return try JSONDecoder().decode(ChartData.self, from: jsonData)
         } catch {
             print(error.localizedDescription)
+            return nil
         }
-        
-        return result
     }
 }

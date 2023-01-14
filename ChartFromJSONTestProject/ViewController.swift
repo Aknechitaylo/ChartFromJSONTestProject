@@ -21,10 +21,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGray4
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         setupChartView()
     }
     
@@ -37,21 +33,22 @@ class ViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        chartView?.layer.cornerRadius = chartView!.frame.height / 18
+        chartView?.layer.cornerRadius = (chartView?.frame.height ?? 0) / 18
     }
     
     private func setupChartView() {
-        if let jsonData = dataFromJSON {
-            if let chartView = MyChartFactory.chart(data: jsonData) {
-                self.chartView = chartView
-                view.addSubview(chartView)
-                layoutChartView()
-            }
-        }
+        guard
+            let jsonData = dataFromJSON,
+            let chartView = MyChartFactory.chart(data: jsonData)
+        else { return }
+        self.chartView = chartView
+        view.addSubview(chartView)
+        layoutChartView()
     }
     
     private func layoutChartView() {
-        chartView?.snp.makeConstraints({ make in
+        guard let chartView = chartView else { return }
+        chartView.snp.makeConstraints({ make in
             if let safeAreaLayoutGuide = UIApplication.shared.windows.first?.safeAreaLayoutGuide,
                safeAreaLayoutGuide.layoutFrame.origin == .zero {
                 make.leading.equalTo(25)

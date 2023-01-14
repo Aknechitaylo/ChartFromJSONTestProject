@@ -14,16 +14,20 @@ protocol ChartFactory {
 
 enum MyChartFactory: ChartFactory {
     static func chart(data: Data) -> UIView? {
-        return viewFromJSONWithData(data)
+        viewFromJSONWithData(data)
     }
     
     static private func viewFromJSONWithData(_ data: Data) -> ChartView? {
-        var chartView: ChartView? = nil
-        if let chartStructure: ChartData = Parser.parseJSON(jsonData: data) {
-            chartView = ChartView(chartData: chartStructure)
+        if let chartData: ChartData = Parser.parseJSON(jsonData: data) {
+            let viewModel = ChartViewModel(chartData: chartData,
+                                           identifiedSeries: chartData.seriesWithId(100) ?? .default,
+                                           hospitalizedSeries: chartData.seriesWithId(200) ?? .default,
+                                           recoveredSeries: chartData.seriesWithId(300) ?? .default)
+            
+            return ChartView(chartViewModel: viewModel)
         }
-
-        return chartView
+        
+        return nil
     }
 }
 

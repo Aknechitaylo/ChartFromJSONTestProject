@@ -10,8 +10,7 @@ import UIKit
 import SnapKit
 
 class SeriesContainer: UIView {
-    let chartView: ChartView
-    let chartData: ChartData
+    let chartViewModel: ChartViewModel
     let cityId: Int
     let upsideLabel: UILabel = UILabel()
     let valuesContainer: UIStackView = UIStackView()
@@ -21,13 +20,12 @@ class SeriesContainer: UIView {
     let recoveredCount: CGFloat
     let sumCount: CGFloat
 
-    init(chartView: ChartView, cityId: Int) {
-        self.chartView = chartView
-        self.chartData = chartView.chartData
+    init(chartViewModel: ChartViewModel, cityId: Int) {
+        self.chartViewModel = chartViewModel
         self.cityId = cityId
-        identifiedCount = CGFloat(chartData.yAxisValue(seriesId: 100, cityId: cityId)!.value)
-        hospitalizedCount = CGFloat(chartData.yAxisValue(seriesId: 200, cityId: cityId)!.value)
-        recoveredCount = CGFloat(chartData.yAxisValue(seriesId: 300, cityId: cityId)!.value)
+        identifiedCount = CGFloat(chartViewModel.chartData.yAxisValue(seriesId: 100, cityId: cityId)!.value)
+        hospitalizedCount = CGFloat(chartViewModel.chartData.yAxisValue(seriesId: 200, cityId: cityId)!.value)
+        recoveredCount = CGFloat(chartViewModel.chartData.yAxisValue(seriesId: 300, cityId: cityId)!.value)
         sumCount = identifiedCount + recoveredCount + hospitalizedCount
         super.init(frame: CGRect.zero)
         setupUI()
@@ -58,7 +56,7 @@ class SeriesContainer: UIView {
     }
     
     private func setupDownsideLabel() {
-        let labelText = chartData.xAxisValueWithId(cityId)?.name
+        let labelText = chartViewModel.chartData.xAxisValueWithId(cityId)?.name
         downsideLabel.text = labelText
         downsideLabel.textColor = .systemGray
         downsideLabel.font = .systemFont(ofSize: 14)
@@ -73,9 +71,9 @@ class SeriesContainer: UIView {
     }
     
     private func setupValuesContainer() {
-        let identifiedView = LabeledView(count: identifiedCount, color: chartView.identifiedColor)
-        let hospitalizedView = LabeledView(count: hospitalizedCount, color: chartView.hospitalizedColor)
-        let recoveredView = LabeledView(count: recoveredCount, color: chartView.recoveredColor)
+        let identifiedView = LabeledView(count: identifiedCount, color: chartViewModel.identifiedColor)
+        let hospitalizedView = LabeledView(count: hospitalizedCount, color: chartViewModel.hospitalizedColor)
+        let recoveredView = LabeledView(count: recoveredCount, color: chartViewModel.recoveredColor)
     
         valuesContainer.axis = .vertical
         valuesContainer.spacing = 2

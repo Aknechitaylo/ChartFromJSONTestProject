@@ -5,42 +5,27 @@
 //  Created by Andrei Nechitailo on 20.12.2022.
 //
 
-import Foundation
 import UIKit
 import SnapKit
 
 class ChartView: UIView {
-    let chartData: ChartData
-    let identifiedSeries: Series
-    let hospitalizedSeries: Series
-    let recoveredSeries: Series
-    let identifiedColor: UIColor
-    let hospitalizedColor: UIColor
-    let recoveredColor: UIColor
-    let identifiedDot: UIView
-    let hospitalizedDot: UIView
-    let recoveredDot: UIView
-    let identifiedLabel: UILabel
-    let hospitalizedLabel: UILabel
-    let recoveredLabel: UILabel
-    let chartContainer = UIView()
-    let chartSeparatorView = UIView(color: .systemGray4)
-    let seriesStackView = UIStackView()
+    private let viewModel: ChartViewModel
+    private let chartContainer = UIView()
+    private let chartSeparatorView = UIView(color: .systemGray4)
+    private let seriesStackView = UIStackView()
+    private lazy var dotsStackView: UIStackView = {
+        let dotsStackView = UIStackView()
+        dotsStackView.spacing = 20
+        dotsStackView.axis = .horizontal
+        for i in 1...viewModel.chartData.seriesCount {
+            guard let series = viewModel.chartData.seriesWithOrder(i) else { continue }
+            dotsStackView.addArrangedSubview(dotContainer(text: series.name, color: UIColor(rgbString: series.color)))
+        }
+        return dotsStackView
+    }()
 
-    init(chartData: ChartData) {
-        self.chartData = chartData
-        identifiedSeries = chartData.seriesWithId(100)!
-        hospitalizedSeries = chartData.seriesWithId(200)!
-        recoveredSeries = chartData.seriesWithId(300)!
-        identifiedColor = UIColor(rgbString: identifiedSeries.color)
-        hospitalizedColor = UIColor(rgbString: hospitalizedSeries.color)
-        recoveredColor = UIColor(rgbString: recoveredSeries.color)
-        identifiedDot = UIView(color: identifiedColor)
-        hospitalizedDot = UIView(color: hospitalizedColor)
-        recoveredDot = UIView(color: recoveredColor)
-        identifiedLabel = UILabel(text: identifiedSeries.name, color: .systemGray)
-        hospitalizedLabel = UILabel(text: hospitalizedSeries.name, color: .systemGray)
-        recoveredLabel = UILabel(text: recoveredSeries.name, color: .systemGray)
+    init(chartViewModel: ChartViewModel) {
+        self.viewModel = chartViewModel
         super.init(frame: CGRect.zero)
         setupView()
     }
@@ -60,46 +45,39 @@ class ChartView: UIView {
     }
     
     private func setupDotsSegment() {
-        let dotHeight = 15
-        
-        addSubview(identifiedDot)
-        identifiedDot.snp.makeConstraints { make in
-            make.height.width.equalTo(dotHeight)
-            make.top.equalTo(20)
+        let dotsContainerStaticHeight = 20
+        addSubview(dotsStackView)
+        dotsStackView.snp.makeConstraints { make in
             make.leading.equalTo(35)
+            make.top.equalTo(20)
+            make.height.equalTo(dotsContainerStaticHeight)
         }
-        identifiedDot.layer.cornerRadius = CGFloat(dotHeight/2)
-        addSubview(identifiedLabel)
-        identifiedLabel.snp.makeConstraints { make in
-            make.leading.equalTo(identifiedDot.snp.trailing).offset(7)
-            make.centerY.equalTo(identifiedDot.snp.centerY)
+    }
+    
+    private func dotContainer(text: String, color: UIColor) -> UIView {
+        let container = UIView()
+        let dotView = UIView(color: color)
+        let dotHeight = 15
+        let label = UILabel(text: text, color: .systemGray)
+        let textSize = label.intrinsicContentSize
+
+        container.addSubview(dotView)
+        dotView.snp.makeConstraints { make in
+            make.height.width.equalTo(dotHeight)
+            make.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+        dotView.layer.cornerRadius = CGFloat(dotHeight/2)
+        
+        container.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.leading.equalTo(dotView.snp.trailing).offset(7)
+            make.trailing.equalToSuperview()
+            make.width.equalTo(textSize.width)
+            make.centerY.equalTo(dotView.snp.centerY)
         }
         
-        addSubview(hospitalizedDot)
-        hospitalizedDot.snp.makeConstraints { make in
-            make.height.width.equalTo(dotHeight)
-            make.top.equalTo(identifiedDot.snp.top)
-            make.leading.equalTo(identifiedLabel.snp.trailing).offset(20)
-        }
-        hospitalizedDot.layer.cornerRadius = CGFloat(dotHeight/2)
-        addSubview(hospitalizedLabel)
-        hospitalizedLabel.snp.makeConstraints { make in
-            make.leading.equalTo(hospitalizedDot.snp.trailing).offset(7)
-            make.centerY.equalTo(identifiedDot.snp.centerY)
-        }
-        
-        addSubview(recoveredDot)
-        recoveredDot.snp.makeConstraints { make in
-            make.height.width.equalTo(dotHeight)
-            make.top.equalTo(identifiedDot.snp.top)
-            make.leading.equalTo(hospitalizedLabel.snp.trailing).offset(20)
-        }
-        recoveredDot.layer.cornerRadius = CGFloat(dotHeight/2)
-        addSubview(recoveredLabel)
-        recoveredLabel.snp.makeConstraints { make in
-            make.leading.equalTo(recoveredDot.snp.trailing).offset(7)
-            make.centerY.equalTo(identifiedDot.snp.centerY)
-        }
+        return container
     }
     
     private func setupChartSegment() {
@@ -113,7 +91,7 @@ class ChartView: UIView {
             make.leading.equalTo(25)
             make.trailing.equalTo(-25)
             make.bottom.equalTo(-20)
-            make.top.equalTo(identifiedDot.snp.bottom).offset(20)
+            make.top.equalTo(dotsStackView.snp.bottom).offset(20)
         }
         chartContainer.addSubview(chartSeparatorView)
         chartSeparatorView.snp.makeConstraints { make in
@@ -124,14 +102,14 @@ class ChartView: UIView {
     }
     
     private func setupSeriesContainersInOrder() {
-        let citiesDataArray = chartData.xAxisValues
+        let citiesDataArray = viewModel.chartData.getXAxisValues()
         seriesStackView.axis = .horizontal
         seriesStackView.distribution = .fillEqually
         layoutStackView(seriesStackView)
 
         for i in 1...citiesDataArray.count {
-            guard let cityId: Int = chartData.xAxisValueWithOrder(i)?.id else { continue }
-            let cityContainer = SeriesContainer(chartView: self, cityId: cityId)
+            guard let cityId: Int = viewModel.chartData.xAxisValueWithOrder(i)?.id else { continue }
+            let cityContainer = SeriesContainer(chartViewModel: viewModel, cityId: cityId)
             seriesStackView.addArrangedSubview(cityContainer)
         }
     }

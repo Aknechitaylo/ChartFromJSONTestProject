@@ -17,6 +17,7 @@
 		FF0530332951FFB200BC47D5 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0530322951FFB200BC47D5 /* Parser.swift */; };
 		FF05303529520E0F00BC47D5 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF05303429520E0F00BC47D5 /* ChartView.swift */; };
 		FF65A9A729589F170068E57B /* SeriesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF65A9A629589F170068E57B /* SeriesContainer.swift */; };
+		FFB36B86296ED64600A10FC8 /* ChartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFB36B85296ED64600A10FC8 /* ChartViewModel.swift */; };
 		FFE62DCD29536D6700B383EE /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE62DCC29536D6700B383EE /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 		FF0530322951FFB200BC47D5 /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		FF05303429520E0F00BC47D5 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		FF65A9A629589F170068E57B /* SeriesContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesContainer.swift; sourceTree = "<group>"; };
+		FFB36B85296ED64600A10FC8 /* ChartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewModel.swift; sourceTree = "<group>"; };
 		FFE62DCC29536D6700B383EE /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -94,6 +96,7 @@
 				FF0530322951FFB200BC47D5 /* Parser.swift */,
 				FF05303429520E0F00BC47D5 /* ChartView.swift */,
 				FF65A9A629589F170068E57B /* SeriesContainer.swift */,
+				FFB36B85296ED64600A10FC8 /* ChartViewModel.swift */,
 				FFE62DCC29536D6700B383EE /* Extensions.swift */,
 				FF05301D2951B49400BC47D5 /* ViewController.swift */,
 				FF05302E2951C82200BC47D5 /* Data.json */,
@@ -223,6 +226,7 @@
 				FF05301C2951B49400BC47D5 /* SceneDelegate.swift in Sources */,
 				FF0530312951FE4700BC47D5 /* ChartFactory.swift in Sources */,
 				FF05303529520E0F00BC47D5 /* ChartView.swift in Sources */,
+				FFB36B86296ED64600A10FC8 /* ChartViewModel.swift in Sources */,
 				FF65A9A729589F170068E57B /* SeriesContainer.swift in Sources */,
 				FFE62DCD29536D6700B383EE /* Extensions.swift in Sources */,
 			);
