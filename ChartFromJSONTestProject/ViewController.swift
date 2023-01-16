@@ -17,6 +17,12 @@ class ViewController: UIViewController {
         return jsonData
     }
     private var chartView: UIView?
+    private lazy var deviceWithSafeArea: Bool = {
+        UIApplication.shared.windows.first?.safeAreaLayoutGuide.layoutFrame.origin != .zero
+    }()
+    private var orientation: UIInterfaceOrientation {
+        UIApplication.shared.windows.first?.windowScene?.interfaceOrientation ?? .unknown
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +42,11 @@ class ViewController: UIViewController {
         chartView?.layer.cornerRadius = (chartView?.frame.height ?? 0) / 18
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        if deviceWithSafeArea { layoutChartView() }
+    }
+    
     private func setupChartView() {
         guard
             let jsonData = dataFromJSON,
@@ -48,17 +59,22 @@ class ViewController: UIViewController {
     
     private func layoutChartView() {
         guard let chartView = chartView else { return }
-        chartView.snp.makeConstraints({ make in
-            if let safeAreaLayoutGuide = UIApplication.shared.windows.first?.safeAreaLayoutGuide,
-               safeAreaLayoutGuide.layoutFrame.origin == .zero {
-                make.leading.equalTo(25)
+        chartView.snp.remakeConstraints { make in
+            if deviceWithSafeArea {
+                if (orientation == .landscapeRight) {
+                    make.leading.equalTo(view.safeAreaLayoutGuide)
+                    make.trailing.equalTo(-25)
+                } else {
+                    make.trailing.equalTo(view.safeAreaLayoutGuide)
+                    make.leading.equalTo(25)
+                }
             } else {
-                make.leading.equalTo(view.safeAreaLayoutGuide)
+                make.leading.equalTo(25)
+                make.trailing.equalTo(-25)
             }
-            make.trailing.equalTo(-25)
             make.top.equalTo(15)
             make.bottom.equalTo(-15)
-        })
+        }
     }
     
     private func showAlertWithText(_ text: String) {
