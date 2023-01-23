@@ -11,8 +11,9 @@ struct ChartData: Decodable {
     private let series: [Series]
     private let xAxisValues: [XAxisValue]
     private let yAxisValues: [YAxisValue]
-    var seriesCount: Int {
-        series.count
+    
+    var sortedSeries: [Series] {
+        self.series.sorted(by: { $0.ord < $1.ord })
     }
     
     func seriesWithId(_ id: Int) -> Series? {

@@ -17,8 +17,7 @@ class ChartView: UIView {
         let dotsStackView = UIStackView()
         dotsStackView.spacing = 20
         dotsStackView.axis = .horizontal
-        for i in 1...viewModel.chartData.seriesCount {
-            guard let series = viewModel.chartData.seriesWithOrder(i) else { continue }
+        viewModel.chartData.sortedSeries.forEach { series in
             dotsStackView.addArrangedSubview(dotContainer(text: series.name, color: UIColor(rgbString: series.color)))
         }
         return dotsStackView
